@@ -30,6 +30,14 @@ type serverError struct {
 	Code    string   `xml:"error_code"`
 }
 
+func (e *serverError) String() string {
+	return fmt.Sprintf("(%s) %s", e.Code, e.Message)
+}
+
+func (e *serverError) Error() error {
+	return errors.New(e.String())
+}
+
 type zipcodeList struct {
 	XMLName xml.Name  `xml:"post"`
 	Items   []Zipcode `xml:"itemlist>item"`
@@ -108,8 +116,7 @@ func (s *Service) SerchZipCode(key string) ([]Zipcode, error) {
 	if err := unmarshalCp949(body, &l); err != nil {
 		var e serverError
 		if err := unmarshalCp949(body, &e); err == nil {
-			errStr := fmt.Sprintf("(%s) %s", e.Code, e.Message)
-			return nil, errors.New(errStr)
+			return nil, e.Error()
 		}
 		return nil, err
 	}
