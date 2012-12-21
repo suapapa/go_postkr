@@ -8,7 +8,18 @@
  *  Description: Main source file in postkr
  */
 
-// Package postkr does ....
+// Package postkr provides access to APIs of epost.kr, Korean post office.
+//
+//    http://biz.epost.go.kr/eportal/custom/custom_9.jsp?subGubun=sub_3&subGubun_1=cum_17&gubun=m07
+//
+// The epost.kr provide APIs for track snail-mail and search zip-code.
+// But, I can't access to the tracking API with my key.
+// So, It's not implemented currently.
+//
+// You need own key which is issued by eport.kr. Get one from this link:
+//
+//    http://biz.epost.go.kr/eportal/custom/custom_11.jsp?subGubun=sub_3&subGubun_1=cum_19&gubun=m07
+//
 package postkr
 
 import (
@@ -22,7 +33,11 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
 )
+
+const queryFmtStr = "http://biz.epost.go.kr/KpostPortal/openapied?" +
+	"regkey=%s&target=%s&query=%s"
 
 type serverError struct {
 	XMLName xml.Name `xml:"error"`
@@ -45,10 +60,13 @@ type zipcodeList struct {
 
 type Zipcode struct {
 	XMLName xml.Name `xml:"item"`
+	// Address: The address of the zipcode
 	Address string   `xml:"address"`
+	// Code: The zip code number
 	Code    string   `xml:"postcd"`
 }
 
+// String get string of Zipcode in form of "XXXXXX:Address of XXXXXX"
 func (p *Zipcode) String() string {
 	if p == nil {
 		return "nil"
@@ -56,11 +74,14 @@ func (p *Zipcode) String() string {
 	return p.Code + ":" + p.Address
 }
 
-var queryFmtStr string = "http://biz.epost.go.kr/KpostPortal/openapied?" +
-	"regkey=%s&target=%s&query=%s"
+// Codenum get zip code in uint
+func (p *Zipcode) Codenum() uint {
+	n, _ := strconv.ParseUint(p.Code, 10, 64)
+	return uint(n)
+}
 
 type Service struct {
-	regkey       string // 사용신청을 통해 받은 인증 key 스트링(30자리)
+	regkey       string
 	lastQueryUrl string
 }
 
@@ -96,6 +117,7 @@ func unmarshalCp949(data []byte, v interface{}) error {
 	return d.Decode(v)
 }
 
+// SearchZipCode get Zipcodes for given [읍면동교] of an address.
 func (s *Service) SerchZipCode(key string) ([]Zipcode, error) {
 	url := s.queryUrl(key, "post")
 	req, err := http.NewRequest("GET", url, nil)
@@ -124,7 +146,11 @@ func (s *Service) SerchZipCode(key string) ([]Zipcode, error) {
 	return l.Items, nil
 }
 
+// Initialize an new Service. Your own key of epost.kr open api is mandatory.
 func NewService(regkey string) *Service {
+	// if len(regkey) != 30 {
+	// 	return nil
+	// }
 	s := new(Service)
 	s.regkey = regkey
 	return s

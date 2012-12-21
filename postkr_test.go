@@ -25,6 +25,14 @@ func ExampleSearchZipCode() {
 	// Output: 135270 - 서울 강남구 도곡동
 }
 
+func ExampleNumberCode() {
+	s := NewService(postkrRegKey)
+	l, _ := s.SerchZipCode("내곡동")
+	cn := l[0].Codenum()
+	fmt.Printf("%03d-%03d\n", cn / 1000, cn % 1000)
+	// Output: 137-180
+}
+
 func ExampleSearchZipCodeForUnexistDong() {
 	s := NewService(postkrRegKey)
 	l, _ := s.SerchZipCode("어우동")
