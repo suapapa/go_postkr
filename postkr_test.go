@@ -4,12 +4,6 @@
 
 package postkr
 
-/*  Filename:    postkr_test.go
- *  Author:      Homin Lee <homin.lee@suapapa.net>
- *  Created:     2012-07-06 20:49:03.265612 +0900 KST
- *  Description: Main test file for postkr
- */
-
 import (
 	"fmt"
 	/* "testing" */
@@ -29,7 +23,7 @@ func ExampleNumberCode() {
 	s := NewService(postkrRegKey)
 	l, _ := s.SerchZipCode("내곡동")
 	cn := l[0].Codenum()
-	fmt.Printf("%03d-%03d\n", cn / 1000, cn % 1000)
+	fmt.Printf("%03d-%03d\n", cn/1000, cn%1000)
 	// Output: 137-180
 }
 
