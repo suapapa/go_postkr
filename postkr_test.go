@@ -6,13 +6,16 @@ package postkr
 
 import (
 	"fmt"
+	"os"
 	/* "testing" */
 )
 
-const postkrRegKey = "5e12d7ed7799470b81298981375429"
+var (
+	POSTKR_APIKEY = os.Getenv("POSTKR_APIKEY")
+)
 
 func ExampleSearchZipCode() {
-	s := NewService(postkrRegKey)
+	s := NewService(POSTKR_APIKEY)
 	l, _ := s.SerchZipCode("도곡동")
 	z := l[0]
 	fmt.Printf("%s - %s\n", z.Code, z.Address)
@@ -20,7 +23,7 @@ func ExampleSearchZipCode() {
 }
 
 func ExampleNumberCode() {
-	s := NewService(postkrRegKey)
+	s := NewService(POSTKR_APIKEY)
 	l, _ := s.SerchZipCode("내곡동")
 	cn := l[0].Codenum()
 	fmt.Printf("%03d-%03d\n", cn/1000, cn%1000)
@@ -28,7 +31,7 @@ func ExampleNumberCode() {
 }
 
 func ExampleSearchZipCodeForUnexistDong() {
-	s := NewService(postkrRegKey)
+	s := NewService(POSTKR_APIKEY)
 	l, _ := s.SerchZipCode("어우동")
 	fmt.Println(len(l))
 	// Output: 0
