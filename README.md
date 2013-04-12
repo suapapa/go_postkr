@@ -14,9 +14,6 @@
 
     $ go get github.com/suapapa/go_postkr
 
-> 참고: 내부 인코딩변환(cp949 tofrom utf8)을 위해 Donovan Jimenez의
-[iconv-go][5] 패키지를 사용하며 위 명령으로 함께 설치됩니다.
-
 ## General Documentation
 
 [godoc.org][4] 링크에서 온라인 문서를 보거나,
@@ -77,4 +74,3 @@ found in the LICENSE file.
 [2]: http://biz.epost.go.kr/eportal/custom/custom_9.jsp?subGubun=sub_3&subGubun_1=cum_17&gubun=m07
 [3]: http://biz.epost.go.kr/eportal/custom/custom_11.jsp?subGubun=sub_3&subGubun_1=cum_19&gubun=m07
 [4]: http://godoc.org/github.com/suapapa/go_postkr
-[5]: https://github.com/djimenez/iconv-go
