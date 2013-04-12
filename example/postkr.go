@@ -17,10 +17,18 @@ var (
 )
 
 func main() {
+	if len(os.Args) < 2 {
+		fmt.Printf("Usage: %s dong...", os.Args[0])
+		os.Exit(1)
+	}
 	s := postkr.NewService(POSTKR_APIKEY)
-	l, _ := s.SerchZipCode(os.Args[1])
 
-	for _, z := range l {
-		fmt.Printf("%s - %s\n", z.Code, z.Address)
+	for _, d := range os.Args[1:] {
+		fmt.Printf("Searching zipcode for %s...\n", d)
+		l, _ := s.SerchZipCode(d)
+		for _, z := range l {
+			fmt.Printf("%s - %s\n", z.Code, z.Address)
+		}
+		fmt.Println("")
 	}
 }
