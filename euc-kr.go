@@ -4,8 +4,9 @@ import (
 	"bytes"
 	"encoding/xml"
 	"errors"
-	"github.com/suapapa/go_hangul/encoding/cp949"
 	"io"
+
+	"github.com/suapapa/go_hangul/encoding/cp949"
 )
 
 func unmarshalCp949XML(data []byte, v interface{}) error {

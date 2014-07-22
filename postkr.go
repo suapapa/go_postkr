@@ -76,7 +76,7 @@ func NewService(regkey string) *Service {
 func (s *Service) queryUrl(str string, target string) string {
 	qs, err := encodeToCp949(str)
 	if err != nil {
-		logE("iconv failed: ", err)
+		// logE("iconv failed: ", err)
 		return ""
 	}
 
