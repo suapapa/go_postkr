@@ -7,8 +7,7 @@ package postkr
 import (
 	"fmt"
 	"os"
-	/* "testing" */
-)
+	/* "testing" */)
 
 var (
 	POSTKR_APIKEY = os.Getenv("POSTKR_APIKEY")

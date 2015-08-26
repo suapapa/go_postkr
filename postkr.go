@@ -36,12 +36,12 @@ func (e *serverError) Error() error {
 }
 
 type zipcodeList struct {
-	XMLName xml.Name  `xml:"post"`
-	Items   []Zipcode `xml:"itemlist>item"`
-	TotalCount int `xml:"pageinfo>totalCount"`
-	TotalPage int `xml:"pageinfo>totalPage"`
-	CountPerPage int `xml:"pageinfo>countPerPage"`
-	CurrentPage int `xml:"pageinfo>currentPage"`
+	XMLName      xml.Name  `xml:"post"`
+	Items        []Zipcode `xml:"itemlist>item"`
+	TotalCount   int       `xml:"pageinfo>totalCount"`
+	TotalPage    int       `xml:"pageinfo>totalPage"`
+	CountPerPage int       `xml:"pageinfo>countPerPage"`
+	CurrentPage  int       `xml:"pageinfo>currentPage"`
 }
 
 type Zipcode struct {
@@ -69,10 +69,10 @@ func (p *Zipcode) Codenum() uint {
 type Service struct {
 	regkey       string
 	lastQueryUrl string
-	totalCount int
-	totalPage int
+	totalCount   int
+	totalPage    int
 	countPerPage int
-	currentPage int
+	currentPage  int
 }
 
 // Initialize an new Service. Your own key of epost.kr open api is mandatory.
@@ -149,7 +149,7 @@ func (s *Service) SearchFiveDigitZipCode(key string, countPerPage int, currentPa
 	if currentPage < 1 {
 		currentPage = 1
 	}
-	
+
 	url := s.queryUrlOfFiveDigit(key, "postNew", countPerPage, currentPage)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -172,7 +172,7 @@ func (s *Service) SearchFiveDigitZipCode(key string, countPerPage int, currentPa
 		}
 		return nil, err
 	}
-	
+
 	s.totalCount = l.TotalCount
 	s.totalPage = l.TotalPage
 	s.countPerPage = l.CountPerPage
@@ -190,7 +190,7 @@ func (s *Service) TotalPage() int {
 }
 
 func (s *Service) CountPerPage() int {
-	return s.countPerPage;
+	return s.countPerPage
 }
 
 func (s *Service) CurrentPage() int {
