@@ -8,7 +8,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/jaehoonkim/go_postkr"
+	"github.com/suapapa/go_postkr"
 	"os"
 )
 
