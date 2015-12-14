@@ -53,15 +53,12 @@ type Zipcode struct {
 }
 
 // String get string of Zipcode in form of "XXXXXX:Address of XXXXXX"
-func (p *Zipcode) String() string {
-	if p == nil {
-		return "nil"
-	}
+func (p Zipcode) String() string {
 	return p.Code + ":" + p.Address
 }
 
 // Codenum get zip code in uint
-func (p *Zipcode) Codenum() uint {
+func (p Zipcode) Codenum() uint {
 	n, _ := strconv.ParseUint(p.Code, 10, 64)
 	return uint(n)
 }
@@ -128,17 +125,17 @@ func (s *Service) SearchZipCode(key string) ([]Zipcode, error) {
 	return l.Items, nil
 }
 
-func (s *Service) queryURLOfFiveDigit(str string, target string, countPerPage int, currentPage int) string {
+func (s *Service) queryURLOfFiveDigit(str string, target string,
+	countPerPage, currentPage int) (string, error) {
 	qs, err := encodeToCp949(str)
 	if err != nil {
-		// logE("iconv failed: ", err)
-		return ""
+		return "", err
 	}
 
 	query := url.QueryEscape(qs)
 	s.lastQueryURL = fmt.Sprintf(fiveDigitQueryFmtStr, s.regkey, target, query, countPerPage, currentPage)
 
-	return s.lastQueryURL
+	return s.lastQueryURL, nil
 }
 
 // SearchFiveDigitZipCode search new format of zipcode
@@ -153,7 +150,11 @@ func (s *Service) SearchFiveDigitZipCode(key string, countPerPage int, currentPa
 		currentPage = 1
 	}
 
-	url := s.queryURLOfFiveDigit(key, "postNew", countPerPage, currentPage)
+	url, err := s.queryURLOfFiveDigit(key, "postNew", countPerPage, currentPage)
+	if err != nil {
+		return nil, err
+	}
+
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
