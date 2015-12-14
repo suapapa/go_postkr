@@ -8,7 +8,6 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -44,6 +43,7 @@ type zipcodeList struct {
 	CurrentPage  int       `xml:"pageinfo>currentPage"`
 }
 
+// Zipcode represents snailmail's zip code
 type Zipcode struct {
 	XMLName xml.Name `xml:"item"`
 	// Address: The address of the zipcode
@@ -66,41 +66,42 @@ func (p *Zipcode) Codenum() uint {
 	return uint(n)
 }
 
+// Service represents epost.kr's post services
 type Service struct {
 	regkey       string
-	lastQueryUrl string
+	lastQueryURL string
 	totalCount   int
 	totalPage    int
 	countPerPage int
 	currentPage  int
 }
 
-// Initialize an new Service. Your own key of epost.kr open api is mandatory.
+// NewService returns new Service. Call it with regkey.
 func NewService(regkey string) *Service {
-	// if len(regkey) != 30 {
-	// 	return nil
-	// }
-	s := new(Service)
+	s := Service{}
 	s.regkey = regkey
-	return s
+	return &s
 }
 
-func (s *Service) queryUrl(str string, target string) string {
+func (s *Service) queryURL(str string, target string) (string, error) {
 	qs, err := encodeToCp949(str)
 	if err != nil {
-		// logE("iconv failed: ", err)
-		return ""
+		return "", err
 	}
 
 	query := url.QueryEscape(qs)
-	s.lastQueryUrl = fmt.Sprintf(queryFmtStr, s.regkey, target, query)
+	s.lastQueryURL = fmt.Sprintf(queryFmtStr, s.regkey, target, query)
 
-	return s.lastQueryUrl
+	return s.lastQueryURL, nil
 }
 
 // SearchZipCode get Zipcodes for given [읍면동교] of an address.
-func (s *Service) SerchZipCode(key string) ([]Zipcode, error) {
-	url := s.queryUrl(key, "post")
+func (s *Service) SearchZipCode(key string) ([]Zipcode, error) {
+	url, err := s.queryURL(key, "post")
+	if err != nil {
+		return nil, err
+	}
+
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -113,12 +114,12 @@ func (s *Service) SerchZipCode(key string) ([]Zipcode, error) {
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	// body, err := ioutil.ReadAll(resp.Body)
 
 	var l zipcodeList
-	if err := unmarshalCp949XML(body, &l); err != nil {
+	if err := unmarshalCp949XML(resp.Body, &l); err != nil {
 		var e serverError
-		if err := unmarshalCp949XML(body, &e); err == nil {
+		if err := unmarshalCp949XML(resp.Body, &e); err == nil {
 			return nil, e.Error()
 		}
 		return nil, err
@@ -127,7 +128,7 @@ func (s *Service) SerchZipCode(key string) ([]Zipcode, error) {
 	return l.Items, nil
 }
 
-func (s *Service) queryUrlOfFiveDigit(str string, target string, countPerPage int, currentPage int) string {
+func (s *Service) queryURLOfFiveDigit(str string, target string, countPerPage int, currentPage int) string {
 	qs, err := encodeToCp949(str)
 	if err != nil {
 		// logE("iconv failed: ", err)
@@ -135,13 +136,15 @@ func (s *Service) queryUrlOfFiveDigit(str string, target string, countPerPage in
 	}
 
 	query := url.QueryEscape(qs)
-	s.lastQueryUrl = fmt.Sprintf(fiveDigitQueryFmtStr, s.regkey, target, query, countPerPage, currentPage)
+	s.lastQueryURL = fmt.Sprintf(fiveDigitQueryFmtStr, s.regkey, target, query, countPerPage, currentPage)
 
-	return s.lastQueryUrl
+	return s.lastQueryURL
 }
 
-// countPerPage : 페이지당 조회 건수
-// currentPage : 조회할 페이지 번호
+// SearchFiveDigitZipCode search new format of zipcode
+// with road based address
+//  * countPerPage : 페이지당 조회 건수
+//  * currentPage : 조회할 페이지 번호
 func (s *Service) SearchFiveDigitZipCode(key string, countPerPage int, currentPage int) ([]Zipcode, error) {
 	if countPerPage < 10 {
 		countPerPage = 10
@@ -150,7 +153,7 @@ func (s *Service) SearchFiveDigitZipCode(key string, countPerPage int, currentPa
 		currentPage = 1
 	}
 
-	url := s.queryUrlOfFiveDigit(key, "postNew", countPerPage, currentPage)
+	url := s.queryURLOfFiveDigit(key, "postNew", countPerPage, currentPage)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -163,11 +166,11 @@ func (s *Service) SearchFiveDigitZipCode(key string, countPerPage int, currentPa
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	// body, err := ioutil.ReadAll(resp.Body)
 	var l zipcodeList
-	if err := unmarshalCp949XML(body, &l); err != nil {
+	if err := unmarshalCp949XML(resp.Body, &l); err != nil {
 		var e serverError
-		if err := unmarshalCp949XML(body, &e); err == nil {
+		if err := unmarshalCp949XML(resp.Body, &e); err == nil {
 			return nil, e.Error()
 		}
 		return nil, err

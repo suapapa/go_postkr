@@ -1,7 +1,6 @@
 package postkr
 
 import (
-	"bytes"
 	"encoding/xml"
 	"errors"
 	"io"
@@ -9,8 +8,8 @@ import (
 	"github.com/suapapa/go_hangul/encoding/cp949"
 )
 
-func unmarshalCp949XML(data []byte, v interface{}) error {
-	d := xml.NewDecoder(bytes.NewBuffer(data))
+func unmarshalCp949XML(r io.Reader, v interface{}) error {
+	d := xml.NewDecoder(r)
 	d.CharsetReader = func(c string, i io.Reader) (io.Reader, error) {
 		if c != "cp949" && c != "euc-kr" {
 			return nil, errors.New("unexpect charset: " + c)
