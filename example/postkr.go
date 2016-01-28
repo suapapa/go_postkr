@@ -8,8 +8,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/suapapa/go_postkr"
 	"os"
+
+	"github.com/suapapa/go_postkr"
 )
 
 var (
@@ -25,7 +26,7 @@ func main() {
 
 	for _, d := range os.Args[1:] {
 		fmt.Printf("Searching zipcode for %s...\n", d)
-		l, _ := s.SerchZipCode(d)
+		l, _ := s.SearchZipCode(d)
 		for _, z := range l {
 			fmt.Printf("%s - %s\n", z.Code, z.Address)
 		}
