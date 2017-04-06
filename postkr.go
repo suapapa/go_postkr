@@ -5,8 +5,6 @@
 package postkr
 
 import (
-	"encoding/xml"
-	"errors"
 	"fmt"
 	"net/http"
 	"net/url"

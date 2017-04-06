@@ -33,7 +33,7 @@ func (s *Service) queryURL5(str string, target string,
 // with road based address
 //  * countPerPage : 페이지당 조회 건수
 //  * currentPage : 조회할 페이지 번호
-func (s *Service) SearchZipCode5(key string, countPerPage int, currentPage int) ([]Zipcode, error) {
+func (s *Service) SearchZipCode5(key string, countPerPage, currentPage int) ([]Zipcode, error) {
 	if countPerPage < 10 {
 		countPerPage = 10
 	}
