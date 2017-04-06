@@ -68,26 +68,11 @@ func (s *Service) SearchZipCode5(key string, countPerPage, currentPage int) ([]Z
 		return nil, err
 	}
 
-	s.totalCount = l.TotalCount
-	s.totalPage = l.TotalPage
-	s.countPerPage = l.CountPerPage
-	s.currentPage = l.CurrentPage
+	// update page & count infos to struct of service
+	s.TotalCount = l.TotalCount
+	s.TotalPage = l.TotalPage
+	s.CountPerPage = l.CountPerPage
+	s.CurrentPage = l.CurrentPage
 
 	return l.Items, nil
-}
-
-func (s *Service) TotalCount() int {
-	return s.totalCount
-}
-
-func (s *Service) TotalPage() int {
-	return s.totalPage
-}
-
-func (s *Service) CountPerPage() int {
-	return s.countPerPage
-}
-
-func (s *Service) CurrentPage() int {
-	return s.currentPage
 }

@@ -29,8 +29,8 @@ type Service struct {
 	regkey       string
 	lastQueryURL string
 
-	totalCount, totalPage     int
-	countPerPage, currentPage int
+	TotalCount, TotalPage     int
+	CountPerPage, CurrentPage int
 }
 
 // NewService returns new Service. Call it with regkey.

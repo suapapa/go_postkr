@@ -27,10 +27,10 @@ func main() {
 	for _, d := range os.Args[1:] {
 		fmt.Printf("Searching zipcode for %s...\n", d)
 		l, _ := s.SearchZipCode5(d, 10, 1) // TODO: show all pages
-		fmt.Println("TotalCount : ", s.TotalCount())
-		fmt.Println("TotalPage : ", s.TotalPage())
-		fmt.Println("CountPerPage : ", s.CountPerPage())
-		fmt.Println("CurrentPage : ", s.CurrentPage())
+		fmt.Println("TotalCount : ", s.TotalCount)
+		fmt.Println("TotalPage : ", s.TotalPage)
+		fmt.Println("CountPerPage : ", s.CountPerPage)
+		fmt.Println("CurrentPage : ", s.CurrentPage)
 		for _, z := range l {
 			fmt.Printf("%s - %s\n", z.Code, z.Address)
 		}
