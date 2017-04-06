@@ -8,8 +8,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/suapapa/go_postkr"
 	"os"
+
+	"github.com/suapapa/go_postkr"
 )
 
 var (
@@ -25,7 +26,7 @@ func main() {
 
 	for _, d := range os.Args[1:] {
 		fmt.Printf("Searching zipcode for %s...\n", d)
-		l, _ := s.SearchFiveDigitZipCode(d, 10, 2)
+		l, _ := s.SearchZipCode5(d, 10, 1) // TODO: show all pages
 		fmt.Println("TotalCount : ", s.TotalCount())
 		fmt.Println("TotalPage : ", s.TotalPage())
 		fmt.Println("CountPerPage : ", s.CountPerPage())
