@@ -6,7 +6,6 @@ import (
 	"io"
 
 	"golang.org/x/text/encoding/korean"
-	"golang.org/x/text/transform"
 )
 
 var (
@@ -21,8 +20,7 @@ func unmarshalCp949XML(r io.Reader, v interface{}) error {
 			return nil, errors.New("unexpect charset: " + c)
 		}
 
-		r := transform.NewReader(i, euckrDec)
-		return r, nil
+		return euckrDec.Reader(i), nil
 	}
 
 	return d.Decode(v)
@@ -30,10 +28,5 @@ func unmarshalCp949XML(r io.Reader, v interface{}) error {
 
 // encodeToCp949 is used to transform input string to cp949 encoding
 func encodeToCp949(utf8Str string) (string, error) {
-	cp949str, _, err := transform.String(euckrEnc, utf8Str)
-	if err != nil {
-		return "", err
-	}
-
-	return cp949str, nil
+	return euckrEnc.String(utf8Str)
 }
